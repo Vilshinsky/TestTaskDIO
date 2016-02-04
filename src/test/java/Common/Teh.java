@@ -100,7 +100,7 @@ public class Teh {
 
     public static void waitMsec(long msec) {
         try {
-            Thread.sleep(1);
+            Thread.sleep(msec);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
