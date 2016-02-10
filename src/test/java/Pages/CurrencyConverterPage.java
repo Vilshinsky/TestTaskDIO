@@ -1,9 +1,13 @@
 package Pages;
 
 import Common.Teh;
+import com.google.common.base.Predicate;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +29,13 @@ public class CurrencyConverterPage {
     public static String anyWeekendDayInCalendar = "//td[contains(@class,'calendarWeekend') " +
             "and @class!='calendarWeekendInvalid' and @class!='calendarWeekendInvalid calendarNextMonth']";
 
-    public static String getListOfCurrencies(int x) {
+    public static ArrayList<String> getListOfCurrencies() {
         ArrayList<String> currencies = new ArrayList<String>();
         List<WebElement> elements = Teh.driver.findElements(By.xpath("//*[@id='scroll-innerBox-1']/div/span[3]"));
         for(int i = 0; i <= elements.size() - 1; i++) {
             currencies.add(elements.get(i).getText());
         }
-        return currencies.get(x);
+        return currencies;
     }
 
     public static void waitPreloaderDisappearing() {
@@ -40,6 +44,27 @@ public class CurrencyConverterPage {
                 Teh.waitMsec(100);
             }
             break;
+        }
+    }
+
+    public static void everyCurrencyMatcher() {
+        Teh.waitXpathElement("//*[@id='scroll-innerBox-2']/div[230]/span[2]");
+        List<WebElement> elements = Teh.driver.findElements(By.xpath("//*[@id='scroll-innerBox-2']/div/span[2]"));
+        for(WebElement element : elements) {
+            String currency = element.getAttribute("innerHTML");
+            String initial = Teh.waitXpathElement(valueAverageRate).getText();
+            Teh.waitXpathElement(inputBaseCurrency).sendKeys(currency);
+            confirmChosenCurrency();
+            String amount = Teh.waitXpathElement(inputBaseAmount).getAttribute("value");
+            String rate = Teh.waitXpathElement(valueAverageRate).getText();
+            for(int i = 0; i < 50; i++) {
+                if(!initial.equals(rate)) {
+                    break;
+                }
+                Teh.waitMsec(100);
+                rate = Teh.waitXpathElement(valueAverageRate).getText();
+            }
+            Assert.assertEquals("Currency: " + currency + ". Rate: " + rate + ". Amount: " + amount + ".", rate, amount);
         }
     }
 
@@ -53,7 +78,7 @@ public class CurrencyConverterPage {
     public static void assertThatAmountCorrespondsToRate() {
         String amount = Teh.waitXpathElement(inputBaseAmount).getAttribute("value");
         String rate = Teh.waitXpathElement(valueAverageRate).getText();
-        Assert.assertEquals(rate, amount);
+        Assert.assertEquals("Rate: " + rate + " Amount: " + amount, rate, amount);
     }
 
     public static void clickOnCalendar() {

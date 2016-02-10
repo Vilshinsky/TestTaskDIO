@@ -34,6 +34,13 @@ public class CurrencyConverterVerification extends BaseTest {
         CurrencyConverterPage.assertThatRateValueHaventChanged();
     }
 
+    @Test
+    public void everyCurrencyShouldCorrespondToRate() {
+        CurrencyConverterPage.everyCurrencyMatcher();
+        CurrencyConverterPage.confirmChosenCurrency();
+        CurrencyConverterPage.assertThatAmountCorrespondsToRate();
+    }
+
     private String currency;
 
     @Parameterized.Parameters

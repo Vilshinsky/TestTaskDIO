@@ -232,7 +232,7 @@ public class Teh {
     }
 
     public static void moveToXpathElement(String selector) {
-        new Actions(driver).moveToElement(driver.findElement(By.xpath(selector)));
+        new Actions(driver).moveToElement(driver.findElement(By.xpath(selector))).perform();
     }
 
     public static void moveToCssElement(String selector) {
